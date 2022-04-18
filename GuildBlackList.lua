@@ -23,31 +23,25 @@ local function update_ignore_list()
     for i=1, n_of_ignored do
         local ignored_name = GetIgnoreName(i)
         IgnoreList[ignored_name] = true;
-        print("From ignore list: " .. ignored_name)
     end
     local ignored_players={}
     for k,v in pairs(IgnoreList) do
         ignored_players[#ignored_players+1] = k
-        print("From global list: " .. k)
     end
     local msg = table.concat(ignored_players, "§")
-    print("Msg: " .. msg)
     SendAddonMessage("GBL:Request", msg, "GUILD" );
 end
 
 local function handle_gbl_req (prefix, msg, dist, from)
-    print(msg)
     local rec_players = str_split(msg, "§")
     for key, ip in pairs(rec_players) do
         IgnoreList[ip] = true
-        print("player:" .. ip)
     end
     local ignored_players={}
     for k,v in pairs(IgnoreList) do
         ignored_players[#ignored_players+1] = k
     end
     local msg_tosend = table.concat(ignored_players, "§")
-    print(msg_tosend)
     SendAddonMessage("GBL:Response", msg_tosend, "GUILD" );
 end
 
@@ -56,13 +50,10 @@ local function handle_gbl_resp (prefix, msg, dist, from)
     for key, ip in pairs(rec_players) do
         IgnoreList[ip] = true
     end
-    print("resp:" .. msg)
 end
 
 local function eventHandler(self, event, ...)
-    print("GBL:" .. event)
     if event == "ADDON_LOADED" then
-        print("ADDON LOADED")
         update_ignore_list()
     elseif event == "CHAT_MSG_ADDON" then
         local prefix, msg, dist, from = ...
