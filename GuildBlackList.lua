@@ -2,6 +2,8 @@ local frame = CreateFrame("FRAME", "FooAddonFrame");
 frame:RegisterEvent("IGNORELIST_UPDATE");
 frame:RegisterEvent("CHAT_MSG_ADDON")
 frame:RegisterEvent("ADDON_LOADED")
+SLASH_GBL1 = "/gbl"
+
 
 local function str_split (inputstr, sep)
     if sep == nil then
@@ -65,16 +67,16 @@ local function eventHandler(self, event, ...)
     end
 end
 
-frame:SetScript("OnEvent", eventHandler);
-
---[[
-    
-    
-    if prefix == "GBL:Request" then
-        print(msg)
-    elseif prefix == "GBL:Response" do
-        print(msg)
+local function gbl_handler(arg)
+    if arg == "update" then
+        update_ignore_list()
+    elseif arg == "show" then
+        for k,v in pairs(IgnoreList) do
+            print(k)
+        end
     end
     
-    
-]]
+end
+
+frame:SetScript("OnEvent", eventHandler);
+SlashCmdList["GBL"] = gbl_handler;
