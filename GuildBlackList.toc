@@ -1,0 +1,8 @@
+## Interface: 30300
+## Title: GuildBlackList
+## Notes: Got a PS5 for my little brother. Best trade I've ever done!
+## Author: Pre
+## Version: 4.2.0
+## SavedVariables: IgnoreList
+
+GuildBlackList.lua
