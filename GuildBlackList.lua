@@ -16,6 +16,18 @@ local function str_split (inputstr, sep)
     return t
 end
 
+function array_sub(t1, t2)
+    local t = {}
+    for i = 1, #t1 do
+      t[t1[i]] = true;
+    end
+    for i = #t2, 1, -1 do
+      if t[t2[i]] then
+        table.remove(t2, i);
+      end
+    end
+  end
+
 local function update_ignore_list()
     if IgnoreList == nil then
         IgnoreList = {}
@@ -54,6 +66,33 @@ local function handle_gbl_resp (prefix, msg, dist, from)
     end
 end
 
+local function get_missing_ignored_players()
+    local bl_ignored={}
+    for k,v in pairs(IgnoreList) do
+        bl_ignored[#bl_ignored+1] = k
+    end
+
+    local game_ignore={}
+    local n_of_ignored = GetNumIgnores()
+    for i=1, n_of_ignored do
+        local ignored_name = GetIgnoreName(i)
+        game_ignore[#game_ignore+1] = ignored_name
+    end
+    array_sub(bl_ignored, game_ignore)
+    return game_ignore
+end
+
+local function ignorelist_updated()
+    new_ignored_players = get_missing_ignored_players()
+    player_msg = table.concat(new_ignored_players, ", ")
+    print("Players added to the guild black list: " .. player_msg)
+    for i, ip in pairs(new_ignored_players) do
+        IgnoreList[ip] = true
+    end
+    local msg_tosend = table.concat(new_ignored_players, "§")
+    SendAddonMessage("GBL:Response", msg_tosend, "GUILD" );
+end
+
 local function eventHandler(self, event, ...)
     if event == "ADDON_LOADED" then
         update_ignore_list()
@@ -64,6 +103,9 @@ local function eventHandler(self, event, ...)
         elseif prefix == "GBL:Response" then
             handle_gbl_resp (prefix, msg, dist, from)
         end
+    elseif event == "IGNORELIST_UPDATE" then
+        ignorelist_updated()
+        print("ignorelist updated")
     end
 end
 
