@@ -93,6 +93,12 @@ local function ignorelist_updated()
     SendAddonMessage("GBL:Response", msg_tosend, "GUILD" );
 end
 
+local function clear_bl()
+    for ip, v in pairs(IgnoreList) do
+        IgnoreList[ip] = nil
+    end
+end
+
 local function eventHandler(self, event, ...)
     if event == "ADDON_LOADED" then
         update_ignore_list()
@@ -102,6 +108,9 @@ local function eventHandler(self, event, ...)
             handle_gbl_req(prefix, msg, dist, from)
         elseif prefix == "GBL:Response" then
             handle_gbl_resp (prefix, msg, dist, from)
+        elseif prefix == "GBL:Clear" then
+            clear_bl()
+            print("gbl clear")
         end
     elseif event == "IGNORELIST_UPDATE" then
         ignorelist_updated()
@@ -116,6 +125,14 @@ local function gbl_handler(arg)
         for k,v in pairs(IgnoreList) do
             print(k)
         end
+    elseif arg == "clear" then
+        clear_bl()
+        SendAddonMessage("GBL:Clear", "lorem ipsum", "GUILD" );
+    elseif arg == "help" then
+        print("List of commands for Guild Blacklist")
+        print("/gbl update : update the blacklist for all online guild member")
+        print("/gbl show : print the blacklist")
+        print("/gbl clear : clear the blacklist for all online guild member")
     end
     
 end
